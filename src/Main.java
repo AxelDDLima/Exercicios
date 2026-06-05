@@ -2,10 +2,9 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public class Main {
-     private static final Conta conta = new Conta();
+    private static final Conta conta = new Conta();
 
-     public static void main(String[] args) {
-        conta.setSaldo(500.0);
+    public static void main(String[] args) {
         int opcao;
         do {
             println("============================================");
@@ -24,60 +23,68 @@ public class Main {
                 case 3 -> depositoDinheiro();
                 case 4 -> sacarDinheiro();
                 case 5 -> pagarBoleto();
-                case 6 -> println(conta.getUsandoChequeEspecial() ? "sim, existe uso do cheque especial!" : "não existe uso do cheque especial!");
+                case 6 ->
+                        println(conta.getUsandoChequeEspecial() ? "sim, existe uso do cheque especial!" : "não existe uso do cheque especial!");
             }
-        }while(opcao>=1 && opcao<=6);
+        } while (opcao >= 1 && opcao <= 6);
 
     }
 
-    public static void println(String mesangem){
+    public static void println(String mesangem) {
         System.out.println(mesangem);
     }
 
-    public static <T> T scanner(Function<String, T> conversor){
+    public static <T> T scanner(Function<String, T> conversor) {
         Scanner input = new Scanner(System.in);
         return conversor.apply(input.nextLine());
     }
 
-    public static void depositoDinheiro(){
+    public static void depositoDinheiro() {
         println("============================================");
         println("Digite o valor a ser depositado: ");
-        double deposito =  scanner(Double::parseDouble);
-        if (conta.getUsandoChequeEspecial() && deposito >= (conta.getSaldoDevedorChequeEspecial())){
+        double deposito = scanner(Double::parseDouble);
+
+        if (conta.getUsandoChequeEspecial() && deposito >= (conta.getSaldoDevedorChequeEspecial())) {
             deposito = deposito - conta.getSaldoDevedorChequeEspecial();
             conta.setSaldoDevedorChequeEspecial(0.0);
             conta.setUsandoChequeEspecial(false);
             conta.setSaldo(conta.getSaldo() + deposito);
-        }else if (conta.getUsandoChequeEspecial() && deposito <= (conta.getSaldoDevedorChequeEspecial())){
+            conta.setChequeEspecial(conta.getSaldo() <= 500 ? 50.0 : (conta.getSaldo() * 0.5));
+        } else if (conta.getUsandoChequeEspecial() && deposito <= (conta.getSaldoDevedorChequeEspecial())) {
             conta.setSaldoDevedorChequeEspecial(conta.getSaldoDevedorChequeEspecial() - deposito);
-        }else {
+        } else if (conta.getContaNova()) {
+            conta.setChequeEspecial(deposito <= 500 ? 50.0 : (deposito * 0.5));
+            conta.setSaldo(deposito);
+            conta.setContaNova(false);
+        } else {
             conta.setSaldo(conta.getSaldo() + deposito);
+            conta.setChequeEspecial(deposito);
         }
     }
 
-    public static void sacarDinheiro(){
+    public static void sacarDinheiro() {
         println("============================================");
         println("Digite o valor do saque: ");
         double valorDoSaque = scanner(Double::parseDouble);
         if (valorDoSaque <= conta.getSaldo())
-            conta.setSaldo(conta.getSaldo()-valorDoSaque);
+            conta.setSaldo(conta.getSaldo() - valorDoSaque);
         else if (valorDoSaque <= (conta.getSaldo() + conta.getChequeEspecial())) {
             double restoSaque = (double) (valorDoSaque - conta.getSaldo());
             conta.setSaldo(0.0);
-            conta.setSaldoDevedorChequeEspecial(restoSaque + (restoSaque*0.20));
+            conta.setSaldoDevedorChequeEspecial(restoSaque + (restoSaque * 0.20));
             conta.setChequeEspecial(conta.getChequeEspecial() - restoSaque);
             conta.setUsandoChequeEspecial(true);
-        }else {
+        } else {
             println("Valor insuficiente");
         }
     }
 
-    public static void pagarBoleto(){
+    public static void pagarBoleto() {
         println("============================================");
         println("Digite o valor do boleto: ");
         double valorDoBoleto = scanner(Double::parseDouble);
         if (valorDoBoleto <= conta.getSaldo())
-            conta.setSaldo(conta.getSaldo()-valorDoBoleto);
+            conta.setSaldo(conta.getSaldo() - valorDoBoleto);
         else
             println("Valor insuficiente");
     }

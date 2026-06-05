@@ -5,6 +5,14 @@ public class Conta {
     private boolean contaNova;
     private double saldoDevedorChequeEspecial;
 
+    public boolean getContaNova() {
+        return contaNova;
+    }
+
+    public void setContaNova(boolean contaNova) {
+        this.contaNova = contaNova;
+    }
+
     public double getSaldoDevedorChequeEspecial() {
         return saldoDevedorChequeEspecial;
     }
@@ -31,10 +39,6 @@ public class Conta {
     }
 
     public void setSaldo(double saldo) {
-        if(contaNova) {
-            setChequeEspecial(saldo <= 500 ? 50.0 : (saldo * 0.5));
-            contaNova = false;
-        }
         this.saldo = saldo;
     }
 
