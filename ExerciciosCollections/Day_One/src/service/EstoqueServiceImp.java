@@ -1,11 +1,9 @@
 package service;
 
-import exception.ProdutoNaoEncontradoException;
 import model.Produto;
 import repository.EstoqueProduto;
 
 import java.util.List;
-import java.util.Optional;
 
 public class EstoqueServiceImp implements EstoqueService{
 
